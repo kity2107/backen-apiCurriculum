@@ -4,8 +4,10 @@ const { matchedData } = require('express-validator');
 
 const getItems = async (req, res) => {
   try {
+    //este req.user lo inyectamos en session.js
+    const user = req.user;
     const data = await curriculumModel.find({});
-    res.send({ data });
+    res.send({ data, user });
   } catch (error) {
     handleHttpError(res, 'Error en getItems');
   }

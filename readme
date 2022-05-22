@@ -1,0 +1,10 @@
+codigo de errores
+https://httpstatuses.com/
+
+//luego de declarar una funcion podemos agrear una ayuda de esta manera, para q al importarla nos muestre......
+/\*\*
+
+- Encrypt textplain
+- @param {\*} textPlain
+- @returns
+  \*/
