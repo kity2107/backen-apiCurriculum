@@ -3,8 +3,10 @@ const checkRol = roles => (req, res, next) => {
   try {
     //extraemos el usuario de req , se inyecto en session
     const { user } = req;
+
     //extraemos los roles del usuario
-    const roleByUser = user.roles;
+    const roleByUser = user.role;
+
     //tomamos el array y lo comparo con el de usuario a ver si tiene algun permiso asignado
     const checkValueRol = roles.some(rolSinlge =>
       roleByUser.includes(rolSinlge)
@@ -15,7 +17,7 @@ const checkRol = roles => (req, res, next) => {
       return;
     }
 
-    netx();
+    next();
   } catch (error) {
     handleHttpError(res, 'Ocurrió un error con los permisos!', 403);
   }

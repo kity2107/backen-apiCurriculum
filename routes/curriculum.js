@@ -22,7 +22,7 @@ router.get('/:id', authMiddleware, validacionGetItem, getItem);
 router.post(
   '/',
   authMiddleware,
-  checkRol(['admin']),
+  checkRol(['user', 'admin']),
   validacionCreateItem,
   createItem
 );

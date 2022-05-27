@@ -5,8 +5,11 @@ const cors = require('cors');
 const morganBody = require('morgan-body');
 const loggerStream = require('./utils/handleLogger');
 
-const dbConnect = require('./config/mongo');
+const dbConnectNoSql = require('./config/mongo');
+const { dbConnectMySql } = require('./config/mysql');
 const app = express();
+
+const DB_ENGINE = process.env.DB_ENGINE;
 
 app.use(cors());
 //capturo el json q envia el body
@@ -30,4 +33,4 @@ app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
 
-dbConnect();
+DB_ENGINE === 'nosql' ? dbConnectNoSql() : dbConnectMySql();

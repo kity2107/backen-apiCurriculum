@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-
+const getProperties = require('../utils/handlePropertiesEngine');
+const propertiesKey = getProperties();
 //de esta foma es una ayuda q nos muestra al importar la funcion , con los params a pasar y demas
 /**
  * Encrypt textplain
@@ -13,7 +14,7 @@ const tokenSign = async user => {
   return jwt.sign(
     {
       //payload
-      _id: user._id,
+      [propertiesKey.id]: user[propertiesKey.id], // el valor de propertiesKey va a ser dinamico segun .env
       role: user.role,
     },
     process.env.JWT_SECRET,

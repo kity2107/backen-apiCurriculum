@@ -1,7 +1,7 @@
 const customHeader = (req, res, next) => {
   try {
     const api_key = req.headers.API_KEY;
-    console.log(api_key, '<<<<');
+
     if (api_key === 'leifer-01') {
       next();
     } else {

@@ -11,6 +11,7 @@ const encrypt = async textPlain => {
 // Comparte password with hash
 
 const compare = async (passwordPlain, hashPassword) => {
+  console.log(passwordPlain, hashPassword);
   return await bcrypt.compare(passwordPlain, hashPassword);
 };
 

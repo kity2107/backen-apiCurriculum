@@ -1,6 +1,8 @@
 const { handleHttpError } = require('../utils/handleError');
 const { verifyToken } = require('../utils/handleJwt');
 const { usuarioModel } = require('../models');
+const getProperties = require('../utils/handlePropertiesEngine');
+const propertiesKey = getProperties();
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -15,12 +17,17 @@ const authMiddleware = async (req, res, next) => {
     //verificamos q el token sea firmado/q sea valido
     const dataToken = await verifyToken(token);
 
-    if (!dataToken._id) {
-      handleHttpError(res, 'Error Id-Token', 401);
+    //si dataToken viene null o vacio
+    if (!dataToken) {
+      handleHttpError(res, 'No contiene información, jwt', 401);
       return;
     }
 
-    const user = await usuarioModel.findById(dataToken._id);
+    //armo la query dinamica deacuerdo a la base a la cualq estoy conectado
+    const query = { [propertiesKey.id]: dataToken[propertiesKey.id] };
+
+    //el methodo findOne funciona en mysql como en mongo
+    const user = await usuarioModel.findOne(query);
     req.user = user;
     //le todo va bien le decimos q pase next()
     next();

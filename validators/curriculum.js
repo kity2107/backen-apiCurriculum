@@ -16,14 +16,14 @@ const validacionCreateItem = [
   check('experiencia.tareas').exists(),
   check('experiencia.referencia').exists(),
   //va a requerir foto si o si el curriculum
-  check('relId').exists().notEmpty().isMongoId(),
+  check('relId').exists().notEmpty(),
   (req, res, next) => {
     return validateResult(req, res, next);
   },
 ];
 const validacionGetItem = [
   //va a requerir foto si o si el curriculum
-  check('id').exists().notEmpty().isMongoId(),
+  check('id').exists().notEmpty(),
   (req, res, next) => {
     return validateResult(req, res, next);
   },

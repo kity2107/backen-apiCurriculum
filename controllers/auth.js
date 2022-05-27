@@ -10,6 +10,7 @@ const registerCtrl = async (req, res) => {
     req = matchedData(req);
     //encripta la pass
     const password = await encrypt(req.password);
+
     //metemos la pass encriptada dentro del body
     const body = { ...req, password };
     //creamos el usuario
@@ -30,36 +31,63 @@ const registerCtrl = async (req, res) => {
 };
 
 //este controlador es el enargado de login de un usuario
+// const loginCtrl = async (req, res) => {
+//   try {
+//     req = matchedData(req);
+//     //buscamos en la base de datos el usuario por el mail
+//     const user = await usuarioModel.findOne({ email: req.email });
+//     //.select('password name role email'); //aplicamos el filtro select y pedimos q traiga pass debido a q en el modelo agregamos el select:false
+//     // si el usuario no existe.......
+//     if (!user) {
+//       handleHttpError(res, 'El usuario no existe', 404);
+//       return;
+//     }
+//     //si el usuario existe la pass q recuperamos de la base la metemos en una const
+//     //const hashPassword = user.get('password');
+//     const hashPassword = user.password;
+
+//     //llamamos al metodo compare q para verificar la pass(bcrypt)
+//     const check = await compare(req.password, hashPassword);
+//     //si la pass es invalida
+//     if (!check) {
+//       handleHttpError(res, 'Password incorrecta', 401);
+//       return;
+//     }
+//     //seteamos para q la data no devuelva la pass, si los demas datos..
+//     user.set('password', undefined, { strict: false });
+//     //si todo es correcto le pasamos a tokenSing el usuario asi firmamos el token y tenemos 2hs
+//     const data = { token: await tokenSign(user), user };
+
+//     res.send({ data });
+//   } catch (error) {
+//     handleHttpError(res, 'Error en loginCtrl');
+//   }
+// };
 const loginCtrl = async (req, res) => {
   try {
-    req = matchedData(req);
-    //buscamos en la base de datos el usuario por el mail
-    const user = await usuarioModel
-      .findOne({ email: req.email })
-      .select('password name role email'); //aplicamos el filtro select y pedimos q traiga pass debido a q en el modelo agregamos el select:false
-    // si el usuario no existe.......
-
+    const body = matchedData(req);
+    const user = await userModel.findOne({ email: body.email });
     if (!user) {
-      handleHttpError(res, 'El usuario no existe', 404);
+      handleErrorResponse(res, 'USER_NOT_EXISTS', 404);
       return;
     }
-    //si el usuario existe la pass q recuperamos de la base la metemos en una const
-    const hashPassword = user.get('password');
-    //llamamos al metodo compare q para verificar la pass(bcrypt)
-    const check = await compare(req.password, hashPassword);
-    //si la pass es invalida
-    if (!check) {
-      handleHttpError(res, 'Password incorrecta', 401);
+    const checkPassword = await compare(body.password, user.password);
+
+    if (!checkPassword) {
+      handleErrorResponse(res, 'PASSWORD_INVALID', 402);
       return;
     }
-    //seteamos para q la data no devuelva la pass, si los demas datos..
-    user.set('password', undefined, { strict: false });
-    //si todo es correcto le pasamos a tokenSing el usuario asi firmamos el token y tenemos 2hs
-    const data = { token: await tokenSign(user), user };
+
+    const tokenJwt = await tokenSign(user);
+
+    const data = {
+      token: tokenJwt,
+      user: user,
+    };
 
     res.send({ data });
-  } catch (error) {
-    handleHttpError(res, 'Error en loginCtrl');
+  } catch (e) {
+    handleHttpError(res, e);
   }
 };
 

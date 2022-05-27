@@ -58,9 +58,27 @@ const CurriculumScheme = new mongoose.Schema(
   }
 );
 // UserScheme.index({ email: 1 });
+
 // UserScheme.plugin(mongoosePaginate);
 // UserScheme.plugin(mongoosePaginateAggregate);
 //nos hace un borrado logico de la base de datos
+
+//implementar metodo propio con relacion a storage
+CurriculumScheme.statics.findAllData = function (name) {
+  //this hace referencia al modelo
+  const joinData = this.aggregate([
+    {
+      $lookup: {
+        from: 'storages', //desde curriculum hago relacion con storage
+        localField: 'relId', //voy a usar el campo relId
+        foreignField: ':_id', //lo relaciono con el campo ._id
+        as: 'reel', //todo se va a guardar en un alias q se va a llamar reel
+      },
+    },
+  ]);
+  return joinData;
+};
+
 CurriculumScheme.plugin(mongoseDelete, {
   overrideMethods: 'all',
 });
